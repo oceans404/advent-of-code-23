@@ -14,6 +14,20 @@ const validDigits = {
     one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine:9
 }
 
+const findNumInStr = (letters) => {
+    let foundNum;
+    for (let key in validDigits) {
+        if (validDigits.hasOwnProperty(key)) {
+            if (letters.includes(key)) {
+                foundNum = validDigits[key].toString(); //keep it a string
+                break;
+            }
+        }
+    }
+    return foundNum;
+}
+
+// search left to right, stop at 1st found
 const numifyStrLtr = (str) => {
     let letters = '';
     let foundNum;
@@ -24,16 +38,12 @@ const numifyStrLtr = (str) => {
         }
         const char = str[i];
         if (!isNum(char)) {
+            // append char
             letters = letters + char;
 
-            //search letters for string numbers
-            for (let key in validDigits) {
-                if (validDigits.hasOwnProperty(key)) {
-                    if (letters.includes(key)) {
-                        foundNum = validDigits[key].toString(); //keep it a string
-                        break;
-                    }
-                }
+            found = findNumInStr(letters);
+            if (found) {
+                foundNum = found;
             }
         } else {
             // if a number is found, that's the first number
@@ -45,7 +55,8 @@ const numifyStrLtr = (str) => {
     return [foundNum, iteratedUpTo];
 }
 
-// i know this isn't dry 
+// search right to left
+// i know this isn't perfectly dry 
 const numifyStrRtl = (str) => {
     let letters = '';
     let foundNum;
@@ -58,14 +69,9 @@ const numifyStrRtl = (str) => {
             // prepend char
             letters = char + letters;
 
-            //search letters for string numbers
-            for (let key in validDigits) {
-                if (validDigits.hasOwnProperty(key)) {
-                    if (letters.includes(key)) {
-                        foundNum = validDigits[key].toString(); //keep it a string
-                        break;
-                    }
-                }
+            found = findNumInStr(letters);
+            if (found) {
+                foundNum = found;
             }
         } else {
             // if a number is found, that's the first number
@@ -86,6 +92,7 @@ const trebuString = (str) => {
     const [firstNum, i] = numifyStrLtr(str);
     lastNum = firstNum;
     
+    // don't include what ltr already searched through
     const foundNum = numifyStrRtl(str.substring(i+1))
     lastNum = foundNum || lastNum;
     
@@ -95,10 +102,10 @@ const trebuString = (str) => {
 console.log(trebuString(exampleInput[0])) // 29
 console.log(trebuString(exampleInput[1])) // 83
 console.log(trebuString(exampleInput[2])) // 13
-console.log(trebuString(exampleInput[3])) // 77
-console.log(trebuString(exampleInput[4])) // 77
-console.log(trebuString(exampleInput[5])) // 77
-console.log(trebuString(exampleInput[6])) // 77
+console.log(trebuString(exampleInput[3])) // 24
+console.log(trebuString(exampleInput[4])) // 42
+console.log(trebuString(exampleInput[5])) // 14
+console.log(trebuString(exampleInput[6])) // 76
 
 const trebuchet = (arr) => {
     const total = arr.map(trebuString).reduce((acc, curr) => acc + curr, 0);
